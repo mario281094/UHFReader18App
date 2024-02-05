@@ -1,6 +1,8 @@
 import ctypes
+import os
 
-dll = ctypes.CDLL("D:\\TRABAJO\RFID\\I+D+I\\UHFReader18App\\UHFReader18App\\dlls\UHFReader18.dll")
+print(f"mi ruta es  {os.getcwd()}")
+dll = ctypes.CDLL("dlls\\UHFReader18.dll")
 
 OpenNetPort = dll.OpenNetPort # Abre el puerto de comunicación por TCP
 CloseNetPort = dll.CloseNetPort #Cierra el puerto de comunicación
