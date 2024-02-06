@@ -135,20 +135,18 @@ print_res_inventory(res_inventory)
 print(f"readresult es {hex(read_result)}")
 print(f"errorcode: {hex(errorcode.value)}")
 
+#formateo de epclenandepc
 DataLen = epclenandepc[0]
-print(f"dataLen = {DataLen}")
+epc = ""
 for i in range(100):
     byte = epclenandepc[i]
     if i >= 1 and i < (1 + DataLen):
         byte = format(byte, '02X')  # Formatea el byte en hexadecimal con dos lugares
-        print(byte, end="")
+        epc += byte
+n = epclenandepc[0]+1
 
-print("\nbloque de comandos")
+
 print(f"""
-Len: {epclenandepc[0]}
-Adr: {hex(epclenandepc[1])}
-Cmd: {hex(epclenandepc[1])}
-Data[]: {epclenandepc[3:19]}
-LSB: {hex(epclenandepc[20])[2:].upper()}
-MSB> {hex(epclenandepc[21])[2:].upper()}
+Tamaño de EPC: {epclenandepc[0]}
+EPC: {epc}
 """)
