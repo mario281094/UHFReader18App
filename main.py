@@ -135,18 +135,18 @@ print_res_inventory(res_inventory)
 print(f"readresult es {hex(read_result)}")
 print(f"errorcode: {hex(errorcode.value)}")
 
-#formateo de epclenandepc
-DataLen = epclenandepc[0]
-epc = ""
-for i in range(100):
-    byte = epclenandepc[i]
-    if i >= 1 and i < (1 + DataLen):
-        byte = format(byte, '02X')  # Formatea el byte en hexadecimal con dos lugares
-        epc += byte
-n = epclenandepc[0]+1
+def process_cards(n, data):
+    cards = []
+    pos = 0
+    for i in range(n):
+        lenght = data[pos]
+        epc = data[pos+1:pos+lenght+1]
+        pos = pos + lenght + 1
+        cards.append("".join(str(format(x, "02X")) for x in epc))
+    return cards
 
+cards = process_cards(cardnum.value, epclenandepc)
 
-print(f"""
-Tamaño de EPC: {epclenandepc[0]}
-EPC: {epc}
-""")
+print("\nLas etiquietas son:")
+for card in cards:
+    print(card)
