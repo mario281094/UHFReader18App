@@ -1,7 +1,5 @@
 import ctypes
-import os
 
-print(f"mi ruta es  {os.getcwd()}")
 dll = ctypes.WinDLL("dlls\\UHFReader18.dll")
 
 # Estas funciones son WINAPI

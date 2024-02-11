@@ -1,6 +1,6 @@
 import ctypes
 
-from src.UHF_functions import *
+from src.base import *
 
 #Variables
 port = ctypes.c_int(6000) # El puerto de red del lector
@@ -24,25 +24,22 @@ epclenandepc = (ctypes.c_ubyte*100)(0) # El array que almacena el resultado del 
 totallen = ctypes.c_long(0) # El número de bytes del array
 cardnum = ctypes.c_long(0) # El número de etiquetas detectadas
 
-EPC = (ctypes.c_ubyte)(0) # El valor EPC de la etiqueta
+EPC = (ctypes.c_ubyte*100)(0) # El valor EPC de la etiqueta
 Mem = ctypes.c_ubyte(0) # El área de memoria a leer
 WordPtr = ctypes.c_ubyte(0) # La dirección de los datos de la etiqueta a leer
 Num = ctypes.c_ubyte(12) # El número de palabras a leer
-Password = (ctypes.c_ubyte)(0) # La contraseña de acceso de la etiqueta
+Password = (ctypes.c_ubyte*8)(0) # La contraseña de acceso de la etiqueta
 maskadr = ctypes.c_ubyte(0) # La dirección de inicio de la máscara EPC
 maskLen = ctypes.c_ubyte(1) # Los bytes de la máscara
 maskFlag = ctypes.c_ubyte(0) # La bandera de la máscara EPC
-Data = (ctypes.c_ubyte)(0) # El array de los datos leídos de la etiqueta
+Data = (ctypes.c_ubyte*100)(0) # El array de los datos leídos de la etiqueta
 EPClength = ctypes.c_ubyte(1) # La longitud en bytes de EPC
 errorcode = ctypes.c_ubyte(0) # El código de error
 
 #main
-result = OpenNetPort(port, 
-            ipaddr, 
-            comadr,
-            ctypes.byref(frmhandle))
-if result == 0:
-    print("Puerto abierto con éxito")
+com = Comunication(6000, "192.168.68.253")
+
+com.openNetPort()
 
 GetReaderInformation(comadr,
                      ctypes.byref(versioninfo),
@@ -67,8 +64,9 @@ res_inventory = Inventory_G2(ctypes.byref(comadr),
                       ctypes.byref(cardnum), 
                       frmhandle)
 
-read_result = ReadCard_G2(ctypes.byref(comadr), 
-                            EPC, 
+try:
+    read_result = ReadCard_G2(comadr, 
+                            epclenandepc, 
                             Mem, 
                             WordPtr, 
                             Num, 
@@ -80,6 +78,8 @@ read_result = ReadCard_G2(ctypes.byref(comadr),
                             EPClength, 
                             ctypes.byref(errorcode), 
                             frmhandle)
+except:
+    ("Ha ocurrido un error")
 
 # Cerrar el puerto de comunicacion
 result = CloseNetPort(frmhandle)
@@ -145,8 +145,16 @@ def process_cards(n, data):
         cards.append("".join(str(format(x, "02X")) for x in epc))
     return cards
 
+def process_card(data):
+    card = []
+    card.append("".join(str(format(x, "02X")) for x in data))
+
 cards = process_cards(cardnum.value, epclenandepc)
+card = process_card(Data)
 
 print("\nLas etiquietas son:")
-for card in cards:
-    print(card)
+for c in cards:
+    print(c)
+print(f"\nLeí de la etiqueta: {card}")
+
+
